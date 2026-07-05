@@ -64,7 +64,7 @@ async function openAdmin() {
 }
 
 function closeAdmin() {
-  location.reload();
+  window.location.href = '/';
 }
 
 function switchAdminTab(tab, btn) {
