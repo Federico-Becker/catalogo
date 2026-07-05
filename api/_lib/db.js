@@ -2,14 +2,23 @@ const DB_URL = process.env.TURSO_DATABASE_URL?.replace('libsql://', 'https://');
 const DB_TOKEN = process.env.TURSO_AUTH_TOKEN;
 
 async function execute(sql, args = []) {
-  const res = await fetch(`${DB_URL}/v2/execute`, {
+  const res = await fetch(`${DB_URL}/v2/pipeline`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${DB_TOKEN}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      statements: [{ q: sql, params: args }],
+      requests: [
+        {
+          type: 'execute',
+          stmt: {
+            sql,
+            args: args.map((a) => ({ type: 'text', value: String(a) })),
+          },
+        },
+        { type: 'close' },
+      ],
     }),
   });
 
@@ -20,19 +29,20 @@ async function execute(sql, args = []) {
 
   const data = await res.json();
   const first = data.results?.[0];
-  if (!first) return { rows: [], lastInsertRowid: 0 };
+  if (!first || first.type === 'close') return { rows: [], lastInsertRowid: 0 };
 
-  if (first.err) throw new Error(first.err);
-
+  const cols = first.result?.cols || [];
   const rows = (first.result?.rows || []).map((row) => {
     const obj = {};
-    first.result?.cols?.forEach((col, i) => { obj[col.name] = row[i]; });
+    cols.forEach((col, i) => {
+      obj[col.name] = row[i]?.value ?? row[i];
+    });
     return obj;
   });
 
   return {
     rows,
-    lastInsertRowid: first.result?.last_insert_rowid || 0,
+    lastInsertRowid: Number(first.result?.last_insert_rowid) || 0,
   };
 }
 
