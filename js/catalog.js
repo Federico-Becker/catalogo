@@ -31,9 +31,12 @@ function productCard(p) {
       <div class="product-gender">${p.gender}</div>
       <div class="product-name">${p.name}</div>
       <div class="product-price">${ss ? '<span style="color:var(--sin-stock);font-size:.85rem">Sin stock</span>' : p.price}</div>
-      ${!ss
-        ? `<a href="${waLink(p.name, p.price)}" target="_blank" class="btn-wa">${WA_SVG} Pedir por WhatsApp</a>`
-        : '<span style="font-size:11px;color:var(--sin-stock);font-weight:600">No disponible</span>'}
+      <div class="product-actions">
+        ${p.img ? `<button class="btn-view" onclick="openLightbox('${p.img.replace(/'/g, "\\'")}','${p.name.replace(/'/g, "\\'")}','${p.price.replace(/'/g, "\\'")}')">Ver foto</button>` : ''}
+        ${!ss
+          ? `<a href="${waLink(p.name, p.price)}" target="_blank" class="btn-wa">${WA_SVG} Pedir por WhatsApp</a>`
+          : '<span style="font-size:11px;color:var(--sin-stock);font-weight:600">No disponible</span>'}
+      </div>
     </div>
   </div>`;
 }
@@ -224,3 +227,16 @@ if ('serviceWorker' in navigator) {
 }
 
 loadData();
+
+function openLightbox(src, name, price) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightboxName').textContent = name;
+  document.getElementById('lightboxPrice').textContent = price;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
