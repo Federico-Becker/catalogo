@@ -180,6 +180,8 @@ async function addProduct() {
       body: JSON.stringify({ name, gender, price, cat_id, img, stock: 'disponible' }),
     });
     if (res.ok) {
+      const data = await res.json();
+      products.push({ id: String(data.id), name, gender, price, cat_id, stock: 'disponible', img });
       document.getElementById('newName').value = '';
       document.getElementById('newGender').value = '';
       document.getElementById('newPrice').value = '';
@@ -187,7 +189,6 @@ async function addProduct() {
       resetUploadArea('newImgUpload');
       document.getElementById('addSuccess').style.display = 'block';
       setTimeout(() => document.getElementById('addSuccess').style.display = 'none', 1500);
-      await loadData();
       renderAdminList(currentAdminSearch);
     }
   } catch (err) {
@@ -245,12 +246,14 @@ async function saveEdit() {
       body: JSON.stringify(data),
     });
     if (res.ok) {
+      const idx = products.findIndex((x) => x.id == id);
+      if (idx !== -1) products[idx] = { ...products[idx], ...data };
       document.getElementById('editSuccess').style.display = 'block';
       setTimeout(() => {
         document.getElementById('editSuccess').style.display = 'none';
         closeEditModal();
-        loadData().then(() => renderAdminList(currentAdminSearch));
-      }, 1000);
+        renderAdminList(currentAdminSearch);
+      }, 800);
     }
   } catch (err) {
     console.error('Error guardando:', err);
@@ -263,13 +266,15 @@ async function toggleStock(id) {
   if (!p) return;
   const newStock = p.stock === 'disponible' ? 'sin-stock' : 'disponible';
   try {
-    await fetch(`${API}/products/${id}`, {
+    const res = await fetch(`${API}/products/${id}`, {
       method: 'PUT',
       headers: authHeaders(),
       body: JSON.stringify({ ...p, stock: newStock }),
     });
-    await loadData();
-    renderAdminList(currentAdminSearch);
+    if (res.ok) {
+      p.stock = newStock;
+      renderAdminList(currentAdminSearch);
+    }
   } catch (err) {
     console.error('Error toggling stock:', err);
   }
@@ -279,9 +284,11 @@ async function toggleStock(id) {
 async function deleteProduct(id) {
   if (!confirm('¿Eliminar este producto?')) return;
   try {
-    await fetch(`${API}/products/${id}`, { method: 'DELETE', headers: authHeaders() });
-    await loadData();
-    renderAdminList(currentAdminSearch);
+    const res = await fetch(`${API}/products/${id}`, { method: 'DELETE', headers: authHeaders() });
+    if (res.ok) {
+      products = products.filter((x) => x.id != id);
+      renderAdminList(currentAdminSearch);
+    }
   } catch (err) {
     console.error('Error eliminando:', err);
   }
@@ -323,12 +330,12 @@ async function addCategory() {
       body: JSON.stringify({ id, name, display_order }),
     });
     if (res.ok) {
+      categories.push({ id, name, display_order: display_order || 0 });
       document.getElementById('newCatId').value = '';
       document.getElementById('newCatName').value = '';
       document.getElementById('newCatOrder').value = '0';
       document.getElementById('addCatSuccess').style.display = 'block';
       setTimeout(() => document.getElementById('addCatSuccess').style.display = 'none', 1500);
-      await loadData();
       renderCategoryList();
       populateSelects();
     } else {
@@ -384,8 +391,8 @@ async function deleteCategory(id) {
   }
   if (!confirm('¿Eliminar esta categoría?')) return;
   try {
-    await fetch(`${API}/categories/${id}`, { method: 'DELETE', headers: authHeaders() });
-    await loadData();
+      await fetch(`${API}/categories/${id}`, { method: 'DELETE', headers: authHeaders() });
+    categories = categories.filter((x) => x.id != id);
     renderCategoryList();
     populateSelects();
   } catch (err) {
