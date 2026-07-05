@@ -1,10 +1,34 @@
 require('dotenv/config');
-const { createClient } = require('@libsql/client');
 
-const db = createClient({
-  url: process.env.TURSO_DATABASE_URL,
-  authToken: process.env.TURSO_AUTH_TOKEN,
-});
+const DB_URL = process.env.TURSO_DATABASE_URL?.replace('libsql://', 'https://');
+const DB_TOKEN = process.env.TURSO_AUTH_TOKEN;
+
+async function execute(sql, args = []) {
+  const res = await fetch(`${DB_URL}/v2/pipeline`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${DB_TOKEN}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      requests: [
+        {
+          type: 'execute',
+          stmt: {
+            sql,
+            args: args.map((a) => ({ type: 'text', value: String(a) })),
+          },
+        },
+        { type: 'close' },
+      ],
+    }),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`DB error ${res.status}: ${text}`);
+  }
+  return res.json();
+}
 
 const categories = [
   { id: 'perfumes-masc', name: 'Perfumes Masculinos', display_order: 1 },
@@ -121,23 +145,23 @@ const defaultOffer = {
 async function seed() {
   console.log('Creando tablas...');
 
-  await db.execute(`CREATE TABLE IF NOT EXISTS categories (
+  await execute(`CREATE TABLE IF NOT EXISTS categories (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     display_order INTEGER DEFAULT 0
   )`);
 
-  await db.execute(`CREATE TABLE IF NOT EXISTS products (
+  await execute(`CREATE TABLE IF NOT EXISTS products (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     gender TEXT DEFAULT '',
     price TEXT DEFAULT '',
-    cat_id TEXT REFERENCES categories(id),
+    cat_id TEXT,
     stock TEXT DEFAULT 'disponible',
     img TEXT DEFAULT ''
   )`);
 
-  await db.execute(`CREATE TABLE IF NOT EXISTS offer (
+  await execute(`CREATE TABLE IF NOT EXISTS offer (
     id INTEGER CHECK (id = 1) PRIMARY KEY,
     name TEXT DEFAULT '',
     description TEXT DEFAULT '',
@@ -146,24 +170,26 @@ async function seed() {
   )`);
 
   console.log('Insertando categorías...');
-  const catStatements = categories.map((cat) => ({
-    sql: 'INSERT OR IGNORE INTO categories (id, name, display_order) VALUES (?, ?, ?)',
-    args: [cat.id, cat.name, cat.display_order],
-  }));
-  await db.batch(catStatements);
+  for (const cat of categories) {
+    await execute(
+      'INSERT OR IGNORE INTO categories (id, name, display_order) VALUES (?, ?, ?)',
+      [cat.id, cat.name, cat.display_order]
+    );
+  }
 
   console.log('Insertando productos...');
-  const prodStatements = products.map((p) => ({
-    sql: 'INSERT INTO products (name, gender, price, cat_id, stock, img) VALUES (?, ?, ?, ?, ?, ?)',
-    args: [p.name, p.gender, p.price, p.cat_id, p.stock, p.img || ''],
-  }));
-  await db.batch(prodStatements);
+  for (const p of products) {
+    await execute(
+      'INSERT INTO products (name, gender, price, cat_id, stock, img) VALUES (?, ?, ?, ?, ?, ?)',
+      [p.name, p.gender, p.price, p.cat_id, p.stock, p.img || '']
+    );
+  }
 
   console.log('Insertando oferta default...');
-  await db.execute({
-    sql: 'INSERT OR IGNORE INTO offer (id, name, description, price, img) VALUES (1, ?, ?, ?, ?)',
-    args: [defaultOffer.name, defaultOffer.description, defaultOffer.price, defaultOffer.img],
-  });
+  await execute(
+    'INSERT OR IGNORE INTO offer (id, name, description, price, img) VALUES (1, ?, ?, ?, ?)',
+    [defaultOffer.name, defaultOffer.description, defaultOffer.price, defaultOffer.img]
+  );
 
   console.log('Seed completado: 7 categorías, 92 productos, 1 oferta.');
   process.exit(0);
