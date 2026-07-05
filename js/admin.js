@@ -131,9 +131,9 @@ function renderAdminList(filter = '') {
         <div class="item-price">${p.price}</div>
         <span class="item-stock ${stockClass}">${stockLabel}</span>
         <div class="item-actions">
-          <button class="btn-edit" onclick="openEditModal(${p.id})">Editar</button>
-          <button class="btn-toggle-stock" onclick="toggleStock(${p.id})">${p.stock === 'disponible' ? 'Sin stock' : 'Disponible'}</button>
-          <button class="btn-del" onclick="deleteProduct(${p.id})">Eliminar</button>
+          <button class="btn-edit" onclick="openEditModal('${p.id}')">Editar</button>
+          <button class="btn-toggle-stock" onclick="toggleStock('${p.id}')">${p.stock === 'disponible' ? 'Sin stock' : 'Disponible'}</button>
+          <button class="btn-del" onclick="deleteProduct('${p.id}')">Eliminar</button>
         </div>
       </div>`;
     });
@@ -198,7 +198,7 @@ async function addProduct() {
 
 // ── EDIT PRODUCT ──
 function openEditModal(id) {
-  const p = products.find((x) => x.id === id);
+  const p = products.find((x) => x.id == id);
   if (!p) return;
   document.getElementById('editId').value = id;
   document.getElementById('editName').value = p.name;
@@ -262,7 +262,7 @@ async function saveEdit() {
 
 // ── TOGGLE STOCK ──
 async function toggleStock(id) {
-  const p = products.find((x) => x.id === id);
+  const p = products.find((x) => x.id == id);
   if (!p) return;
   const newStock = p.stock === 'disponible' ? 'sin-stock' : 'disponible';
   try {
