@@ -1,4 +1,4 @@
-const { query, execute } = require('../_lib/db');
+const { query } = require('../_lib/db');
 const { authMiddleware } = require('../_lib/auth');
 
 async function handler(req, res) {
@@ -8,24 +8,26 @@ async function handler(req, res) {
     return res.status(200).json(offer);
   }
 
-  if (req.method === 'PUT') {
-    const { name, description, price, img } = req.body || {};
-    const existing = await query('SELECT id FROM offer WHERE id=1');
-    if (existing.length > 0) {
-      await query(
-        'UPDATE offer SET name=?, description=?, price=?, img=? WHERE id=1',
-        [name || '', description || '', price || '', img || '']
-      );
-    } else {
-      await query(
-        'INSERT INTO offer (id, name, description, price, img) VALUES (1, ?, ?, ?, ?)',
-        [name || '', description || '', price || '', img || '']
-      );
+  return authMiddleware(async (req, res) => {
+    if (req.method === 'PUT') {
+      const { name, description, price, img } = req.body || {};
+      const existing = await query('SELECT id FROM offer WHERE id=1');
+      if (existing.length > 0) {
+        await query(
+          'UPDATE offer SET name=?, description=?, price=?, img=? WHERE id=1',
+          [name || '', description || '', price || '', img || '']
+        );
+      } else {
+        await query(
+          'INSERT INTO offer (id, name, description, price, img) VALUES (1, ?, ?, ?, ?)',
+          [name || '', description || '', price || '', img || '']
+        );
+      }
+      return res.status(200).json({ message: 'Oferta actualizada' });
     }
-    return res.status(200).json({ message: 'Oferta actualizada' });
-  }
 
-  return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method not allowed' });
+  })(req, res);
 }
 
-module.exports = authMiddleware(handler);
+module.exports = handler;

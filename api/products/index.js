@@ -7,18 +7,20 @@ async function handler(req, res) {
     return res.status(200).json(rows);
   }
 
-  if (req.method === 'POST') {
-    const { name, gender, price, cat_id, stock, img } = req.body || {};
-    if (!name) return res.status(400).json({ error: 'Nombre requerido' });
+  return authMiddleware(async (req, res) => {
+    if (req.method === 'POST') {
+      const { name, gender, price, cat_id, stock, img } = req.body || {};
+      if (!name) return res.status(400).json({ error: 'Nombre requerido' });
 
-    const result = await query(
-      'INSERT INTO products (name, gender, price, cat_id, stock, img) VALUES (?, ?, ?, ?, ?, ?)',
-      [name, gender || '', price || '', cat_id || 'sin-categoria', stock || 'disponible', img || '']
-    );
-    return res.status(201).json({ id: Number(result.lastInsertRowid), message: 'Producto creado' });
-  }
+      const result = await query(
+        'INSERT INTO products (name, gender, price, cat_id, stock, img) VALUES (?, ?, ?, ?, ?, ?)',
+        [name, gender || '', price || '', cat_id || 'sin-categoria', stock || 'disponible', img || '']
+      );
+      return res.status(201).json({ id: Number(result.lastInsertRowid), message: 'Producto creado' });
+    }
 
-  return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method not allowed' });
+  })(req, res);
 }
 
-module.exports = authMiddleware(handler);
+module.exports = handler;
