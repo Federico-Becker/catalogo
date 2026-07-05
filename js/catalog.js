@@ -17,8 +17,9 @@ function waLink(name, price) {
 
 function productCard(p) {
   const ss = p.stock === 'sin-stock';
-  const isKit = p.gender && p.gender.includes('KIT');
-  const isMini = p.gender && p.gender.includes('MINI');
+  const genderUpper = p.gender ? p.gender.toUpperCase() : '';
+  const isKit = genderUpper.includes('KIT');
+  const isMini = genderUpper.includes('MINI');
   const img = p.img
     ? `<img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
     : '';
