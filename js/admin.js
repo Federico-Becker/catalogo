@@ -412,6 +412,7 @@ async function loadOfferForm() {
     document.getElementById('offerDesc').value = offer.description || '';
     document.getElementById('offerPrice').value = offer.price || '';
     document.getElementById('offerImg').value = offer.img || '';
+    document.getElementById('offerBadge').value = offer.badge || 'Esta semana';
 
     const uploadArea = document.getElementById('offerImgUpload');
     if (offer.img) {
@@ -442,6 +443,7 @@ async function saveOffer() {
     description: document.getElementById('offerDesc').value,
     price: document.getElementById('offerPrice').value,
     img: document.getElementById('offerImg').value,
+    badge: document.getElementById('offerBadge').value,
   };
   try {
     const res = await fetch(`${API}/offer`, {

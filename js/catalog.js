@@ -65,7 +65,7 @@ function renderSections() {
     <h2 class="section-title">Oferta de la <em>semana</em></h2>
     <div class="section-divider"></div>
     <div class="offer-banner" id="offer-banner">
-      <span class="offer-badge">Esta semana</span>
+      <span class="offer-badge" id="offerBadge">Esta semana</span>
       <div class="offer-img-wrap" id="offerImgWrap"><div class="offer-img-placeholder">🌿</div></div>
       <div class="offer-info">
         <h3 id="offerTitle"></h3>
@@ -112,6 +112,7 @@ function renderProducts() {
 }
 
 function renderOffer(offer) {
+  document.getElementById('offerBadge').textContent = offer.badge || 'Esta semana';
   document.getElementById('offerTitle').textContent = offer.name || '';
   document.getElementById('offerDesc').textContent = offer.description || '';
   document.getElementById('offerPrice').textContent = offer.price || '';
