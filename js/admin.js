@@ -66,9 +66,10 @@ async function openAdmin() {
 function closeAdmin() {
   document.getElementById('adminPanel').classList.remove('open');
   document.getElementById('loginScreen').classList.remove('open');
-  document.body.style.overflow = '';
-  document.documentElement.scrollTop = 0;
-  document.body.scrollTop = 0;
+  setTimeout(() => {
+    document.body.style.overflow = '';
+    window.scrollTo(0, 0);
+  }, 50);
 }
 
 function switchAdminTab(tab, btn) {
