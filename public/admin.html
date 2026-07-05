@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin · Catálogo Meri Jimenez</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="open">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="login-brand-icon">🌿</div>
+      <h1>Meri Jimenez</h1>
+      <p>Área de administración</p>
+    </div>
+    <div class="login-field">
+      <label>Contraseña</label>
+      <div class="login-input-wrap">
+        <input type="password" id="adminPass" placeholder="••••••••"
+               onkeydown="if(event.key==='Enter')tryLogin()"
+               oninput="document.getElementById('loginError').style.display='none';this.classList.remove('error')">
+        <button class="toggle-pass" type="button" onclick="togglePassVis()" title="Mostrar/ocultar">
+          <span id="eyeIcon">👁</span>
+        </button>
+      </div>
+      <p class="login-error-msg" id="loginError">Contraseña incorrecta. Intentá de nuevo.</p>
+    </div>
+    <button class="btn-login" id="btnLogin" onclick="tryLogin()">Ingresar</button>
+    <button class="login-back" onclick="location.href='/'">← Volver al catálogo</button>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-header">
+    <div>
+      <h2>Panel de administración</h2>
+      <span>Meri Jimenez · Catálogo 2026</span>
+    </div>
+    <button class="btn-secondary" onclick="closeAdmin()">Cerrar panel</button>
+  </div>
+  <div class="admin-body">
+
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('productos',this)">Productos</button>
+      <button class="admin-tab" onclick="switchAdminTab('categorias',this)">Categorías</button>
+      <button class="admin-tab" onclick="switchAdminTab('oferta',this)">Oferta</button>
+    </div>
+
+    <!-- TAB: PRODUCTOS -->
+    <div class="admin-tab-content active" id="tab-productos">
+
+      <div class="admin-section-title">Agregar producto</div>
+      <div class="add-product-form">
+        <h3>Nuevo producto</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Nombre</label><input type="text" id="newName" placeholder="Kaiak Aventura"></div>
+          <div class="form-group"><label>Género/Tipo</label><input type="text" id="newGender" placeholder="Masculino"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Precio</label><input type="text" id="newPrice" placeholder="$43.960"></div>
+          <div class="form-group"><label>Categoría</label><select id="newCat"></select></div>
+        </div>
+        <div class="form-group">
+          <label>Foto del producto</label>
+          <div class="upload-area" id="newImgUpload" onclick="document.getElementById('newImgInput').click()">
+            <input type="file" id="newImgInput" accept="image/*" onchange="handleUpload(this,'newImgUpload','newImg')">
+            <div class="upload-placeholder">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+              <div>Hacé clic para subir una foto</div>
+            </div>
+          </div>
+          <input type="hidden" id="newImg">
+        </div>
+        <button class="btn-primary" onclick="addProduct()">Agregar producto</button>
+        <p class="success-msg" id="addSuccess" style="display:none">¡Producto agregado!</p>
+        <p class="error-msg" id="addError" style="display:none">Completá nombre y precio.</p>
+      </div>
+
+      <div class="admin-section-title">Lista de productos</div>
+      <div class="admin-search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="adminSearchInput" placeholder="Buscar producto..." oninput="filterAdminList(this.value)">
+        <button class="clear-admin-search" id="clearAdminSearch" onclick="clearAdminSearch()">×</button>
+      </div>
+      <div class="admin-product-list" id="adminProductList"></div>
+    </div>
+
+    <!-- TAB: CATEGORÍAS -->
+    <div class="admin-tab-content" id="tab-categorias">
+
+      <div class="admin-section-title">Agregar categoría</div>
+      <div class="add-product-form">
+        <h3>Nueva categoría</h3>
+        <div class="form-row">
+          <div class="form-group"><label>ID (sin espacios)</label><input type="text" id="newCatId" placeholder="nueva-categoria"></div>
+          <div class="form-group"><label>Nombre visible</label><input type="text" id="newCatName" placeholder="Nueva Categoría"></div>
+        </div>
+        <div class="form-group"><label>Orden</label><input type="number" id="newCatOrder" placeholder="0" value="0"></div>
+        <button class="btn-primary" onclick="addCategory()">Crear categoría</button>
+        <p class="success-msg" id="addCatSuccess" style="display:none">¡Categoría creada!</p>
+        <p class="error-msg" id="addCatError" style="display:none">Completá ID y nombre.</p>
+      </div>
+
+      <div class="admin-section-title">Lista de categorías</div>
+      <div class="admin-category-list" id="adminCategoryList"></div>
+    </div>
+
+    <!-- TAB: OFERTA -->
+    <div class="admin-tab-content" id="tab-oferta">
+      <div class="admin-section-title">Editar oferta de la semana</div>
+      <div class="add-product-form">
+        <h3>Oferta destacada</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Nombre producto</label><input type="text" id="offerName" placeholder="Humor Liberta"></div>
+          <div class="form-group"><label>Descripción breve</label><input type="text" id="offerDesc" placeholder="Eau de Toilette + Deo · Unisex"></div>
+        </div>
+        <div class="form-group"><label>Precio</label><input type="text" id="offerPrice" placeholder="$49.600"></div>
+        <div class="form-group">
+          <label>Foto de la oferta</label>
+          <div class="upload-area" id="offerImgUpload" onclick="document.getElementById('offerImgInput').click()">
+            <input type="file" id="offerImgInput" accept="image/*" onchange="handleUpload(this,'offerImgUpload','offerImg')">
+            <div class="upload-placeholder">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+              <div>Hacé clic para subir una foto</div>
+            </div>
+          </div>
+          <input type="hidden" id="offerImg">
+        </div>
+        <button class="btn-primary" onclick="saveOffer()">Actualizar oferta</button>
+        <p class="success-msg" id="offerSuccess" style="display:none">¡Oferta actualizada!</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- EDIT PRODUCT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeEditModal()">✕</button>
+    <h2>Editar producto</h2>
+    <input type="hidden" id="editId">
+    <div class="form-row">
+      <div class="form-group"><label>Nombre</label><input type="text" id="editName"></div>
+      <div class="form-group"><label>Género/Tipo</label><input type="text" id="editGender"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Precio</label><input type="text" id="editPrice"></div>
+      <div class="form-group"><label>Categoría</label><select id="editCat"></select></div>
+    </div>
+    <div class="form-group">
+      <label>Foto</label>
+      <div class="upload-area" id="editImgUpload" onclick="document.getElementById('editImgInput').click()">
+        <input type="file" id="editImgInput" accept="image/*" onchange="handleUpload(this,'editImgUpload','editImg')">
+        <div class="upload-placeholder">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+          <div>Hacé clic para cambiar la foto</div>
+        </div>
+      </div>
+      <input type="hidden" id="editImg">
+    </div>
+    <div class="form-group">
+      <label>Estado</label>
+      <select id="editStock">
+        <option value="disponible">Disponible</option>
+        <option value="sin-stock">Sin stock</option>
+      </select>
+    </div>
+    <button class="btn-primary" onclick="saveEdit()">Guardar cambios</button>
+    <p class="success-msg" id="editSuccess" style="display:none">¡Guardado!</p>
+  </div>
+</div>
+
+<!-- EDIT CATEGORY MODAL -->
+<div class="modal-overlay" id="editCatModal">
+  <div class="modal" style="max-width:420px">
+    <button class="modal-close" onclick="closeEditCatModal()">✕</button>
+    <h2>Editar categoría</h2>
+    <input type="hidden" id="editCatId">
+    <div class="form-group"><label>Nombre</label><input type="text" id="editCatName"></div>
+    <div class="form-group"><label>Orden</label><input type="number" id="editCatOrder"></div>
+    <button class="btn-primary" onclick="saveEditCategory()">Guardar cambios</button>
+    <p class="success-msg" id="editCatSuccess" style="display:none">¡Guardado!</p>
+  </div>
+</div>
+
+<script src="/js/admin.js"></script>
+</body>
+</html>

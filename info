@@ -1,0 +1,147 @@
+# Contexto del proyecto — Catálogo Meri Jimenez
+
+## Qué es
+
+Una página web de catálogo de productos Natura y Avon para una revendedora llamada **Meri Jimenez**. Es un único archivo HTML (`index.html`) sin dependencias externas excepto Google Fonts. Funciona abriéndolo directamente en el navegador o subiéndolo a un hosting.
+
+---
+
+## Datos del negocio
+
+- **Propietaria:** Meri Jimenez (`@meri_heroes`)
+- **Número de WhatsApp:** `+54 9 11 3653 4668` (formato para links: `5491136534668`)
+- **Productos:** Natura y Avon — perfumes, cuidado corporal, facial, maquillaje, desodorantes, cabello
+- **Año:** 2026
+
+---
+
+## Diseño visual
+
+- **Paleta:** marrón oscuro (`#3D2314`), marrón medio (`#7B4A2D`), marrón claro/dorado (`#C4956A`), crema (`#F5EFE6`), beige cálido (`#E8DECE`)
+- **Tipografías:** Playfair Display (títulos, serif/italic) + Inter (cuerpo, sans-serif)
+- **Estilo:** elegante, cálido, femenino — similar a branding Natura
+- **Responsive:** funciona en mobile y desktop
+
+---
+
+## Estructura del archivo
+
+Un solo archivo `index.html` con todo embebido (CSS + JS + datos). No tiene backend ni base de datos.
+
+### Secciones visibles (tabs de categorías):
+1. Oferta de la semana
+2. Perfumes Masculinos
+3. Perfumes Femeninos
+4. Cuidado Corporal
+5. Facial
+6. Maquillaje
+7. Desodorantes
+8. Cabello
+
+### Componentes del layout:
+- **Topbar sticky** — logo "Meri ♥" + buscador en tiempo real
+- **Hero** — título grande con tipografía Playfair Display italic
+- **Tabs de categorías** — navegación por secciones
+- **Cards de producto** — imagen (o placeholder 🌿), nombre, género/tipo, precio, botón WhatsApp
+- **Banner oferta de la semana** — destacado especial editable
+- **Footer** — copyright + link de admin oculto
+
+---
+
+## Funcionalidades del catálogo (vista pública)
+
+- **Búsqueda en tiempo real** desde la topbar — filtra por nombre, género o categoría
+- **Navegación por categorías** con tabs horizontales scrolleables
+- **Botón WhatsApp** en cada producto — abre un chat con mensaje preescrito:
+  `"Hola Meri! Me interesa: *[nombre]* ([precio]). ¿Está disponible?"`
+- **Productos sin stock** — se muestran con badge rojo "Sin stock" y sin botón de WhatsApp
+- **Badges especiales** — "Kit" y "Mini" se detectan automáticamente del campo género/tipo
+
+---
+
+## Panel de administración (oculto)
+
+### Cómo acceder:
+1. Bajar hasta el footer de la página
+2. Hacer clic en el pequeño punto `·` casi invisible debajo del texto "Consultá disponibilidad por WhatsApp"
+3. Se abre una pantalla de login fullscreen con diseño oscuro elegante
+4. Ingresar la contraseña: **`meri2026`**
+5. Hacer clic en "Ingresar"
+
+### Qué se puede hacer desde el panel:
+- **Editar producto** — nombre, género/tipo, precio, categoría, URL de imagen, estado
+- **Cambiar disponibilidad** — toggle "Disponible" / "Sin stock" con un clic
+- **Eliminar producto** — con confirmación, irreversible
+- **Agregar producto nuevo** — nombre (obligatorio), género, precio (obligatorio), categoría, imagen
+- **Actualizar oferta de la semana** — nombre, descripción breve, precio
+
+---
+
+## Persistencia de datos
+
+Los cambios se guardan en **localStorage** del navegador con estas claves:
+- `meri_products` — array JSON con todos los productos
+- `meri_nextid` — contador para IDs nuevos
+- `meri_offer` — objeto JSON con la oferta de la semana (`name`, `desc`, `price`)
+
+**Importante:** los datos son locales al navegador. Si se abre en otro navegador/dispositivo, muestra los datos originales del HTML. Si se borra el historial del navegador, se pierden los cambios.
+
+---
+
+## Productos cargados (datos originales del HTML)
+
+92 productos en total distribuidos así:
+
+### Perfumes Masculinos (IDs 1–12)
+Kaiak Aventura, Kaiak Clásico, Kaiak Sonar, Kaiak Pulso, Kaiak Urbe ($43.960 c/u), Conexión de Humor, Humor Online, Beijo de Humor ($42.140 c/u), Humor a Dois MINI ($24.560), Homem Nos ($55.790), Kaiak Eau de Parfum ($60.060), 300KM/H Quantum ($22.900)
+
+### Perfumes Femeninos (IDs 13–30)
+Kaiak Oceano, Kaiak Sonar, Kaiak Clásico ($43.960 c/u), Humor Online ($56.800), Humor Liberta, Humor Transforma, Humor Da Minha Vida, Beijo de Humor, Humor Meu Primeiro ($42.140 c/u), Humor Da Minha Vida KIT X2 ($59.000), Ilia Flor de Laranjeira, Una Art ($79.000), Luna Absoluta ($65.000), Secret Fantasy Dreams ($23.400), Timeless ($28.800), Today Tomorrow Always Radiance/Everlasting ($55.600 c/u), Colonia Refrescante Imari ($5.600)
+
+### Cuidado Corporal (IDs 31–56)
+Líneas Ekos (Açaí, Castaña, Pitanga $32.480; Pitanga Preta SIN STOCK), Aceite Corporal MINI ($15.000), Body varios sabores ($23.700 c/u), Cremas de manos ($5.000–$16.600), Jabones ($8.600–$15.800), Deo en crema ($5.500), Bálsamo Labial ($8.320), Care Aceite de Coco 1L ($24.800), Care Palta ($8.600), Lociones perfumadas ($5.200)
+
+### Facial (IDs 57–63)
+Anew Reversalist Día/Noche ($22.800 c/u), Anew Reversalist KIT X2 ($42.000), Power Contorno ($14.400), Protector Solar 30FPS ($22.900), Desmaquillante Bifásico ($21.600), Refill Desmaquillante ($17.280)
+
+### Maquillaje (IDs 64–77)
+Máscaras (varios $7.700–$29.900), Delineador ($19.400), Gel Cejas ($11.600), Labial ($10.000), Iluminador ($8.200), Esmaltes ($3.800–$11.700), Rubor en crema ($16.800), Bálsamo Labial ($9.800), Kriska Drama/Clásico ($38.600 c/u)
+
+### Desodorantes (IDs 78–90)
+Deo Kaiak/Humor ($11.920), Roll-On Homem (SIN STOCK), Roll-On 300KM/H varios ($5.000 c/u), Deo aerosol varios ($5.000 c/u), Deo Far Away/Pur Blanca ($3.900 c/u)
+
+### Cabello (IDs 91–92)
+Acondicionador Todo Tipo/Rizados ($7.900 c/u)
+
+---
+
+## Tecnologías usadas
+
+- HTML5 + CSS3 + JavaScript vanilla (sin frameworks)
+- Google Fonts (Playfair Display, Inter)
+- localStorage para persistencia
+- Sin backend, sin base de datos, sin npm, sin build step
+
+---
+
+## Cómo subir a internet
+
+**Netlify Drop (recomendado):**
+1. Ir a `app.netlify.com/drop`
+2. Arrastrar `index.html`
+3. Se genera una URL tipo `https://nombre-random.netlify.app`
+
+También funciona en Tiiny.host o GitHub Pages.
+
+---
+
+## Notas para quien continúe el desarrollo
+
+- El archivo completo es un solo `index.html` de ~911 líneas
+- Los productos están hardcodeados en un array JS llamado `products` al inicio del script
+- `nextId` arranca en 93 (continuación de los IDs existentes)
+- La contraseña está hardcodeada como constante: `const ADMIN_PASS = 'meri2026'`
+- El número de WhatsApp está como constante: `const WA = '5491136534668'`
+- Para cambiar la contraseña: buscar `ADMIN_PASS` en el JS y cambiar el valor
+- Para agregar más categorías: agregar tab en el HTML, section en el HTML y el cat id en el array de `renderAll()`
+- Las imágenes van por URL externa (imgbb.com, imgur.com, etc.) — no hay upload de archivos
