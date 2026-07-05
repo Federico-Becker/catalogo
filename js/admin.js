@@ -239,7 +239,7 @@ async function saveEdit() {
     stock: document.getElementById('editStock').value,
   };
   try {
-    const res = await fetch(`${API}/products?id=${id}`, {
+    const res = await fetch(`${API}/products/${id}`, {
       method: 'PUT',
       headers: authHeaders(),
       body: JSON.stringify(data),
@@ -263,7 +263,7 @@ async function toggleStock(id) {
   if (!p) return;
   const newStock = p.stock === 'disponible' ? 'sin-stock' : 'disponible';
   try {
-    await fetch(`${API}/products?id=${id}`, {
+    await fetch(`${API}/products/${id}`, {
       method: 'PUT',
       headers: authHeaders(),
       body: JSON.stringify({ ...p, stock: newStock }),
@@ -279,7 +279,7 @@ async function toggleStock(id) {
 async function deleteProduct(id) {
   if (!confirm('¿Eliminar este producto?')) return;
   try {
-    await fetch(`${API}/products?id=${id}`, { method: 'DELETE', headers: authHeaders() });
+    await fetch(`${API}/products/${id}`, { method: 'DELETE', headers: authHeaders() });
     await loadData();
     renderAdminList(currentAdminSearch);
   } catch (err) {
@@ -358,7 +358,7 @@ async function saveEditCategory() {
   const name = document.getElementById('editCatName').value;
   const display_order = parseInt(document.getElementById('editCatOrder').value) || 0;
   try {
-    const res = await fetch(`${API}/categories?id=${id}`, {
+    const res = await fetch(`${API}/categories/${id}`, {
       method: 'PUT',
       headers: authHeaders(),
       body: JSON.stringify({ name, display_order }),
@@ -384,7 +384,7 @@ async function deleteCategory(id) {
   }
   if (!confirm('¿Eliminar esta categoría?')) return;
   try {
-    await fetch(`${API}/categories?id=${id}`, { method: 'DELETE', headers: authHeaders() });
+    await fetch(`${API}/categories/${id}`, { method: 'DELETE', headers: authHeaders() });
     await loadData();
     renderCategoryList();
     populateSelects();
