@@ -164,6 +164,7 @@ async function addProduct() {
   const name = document.getElementById('newName').value.trim();
   const price = document.getElementById('newPrice').value.trim();
   const gender = document.getElementById('newGender').value.trim();
+  const type = document.getElementById('newType').value.trim();
   const cat_id = document.getElementById('newCat').value;
   const img = document.getElementById('newImg').value;
   if (!name || !price) {
@@ -176,13 +177,14 @@ async function addProduct() {
     const res = await fetch(`${API}/products`, {
       method: 'POST',
       headers: authHeaders(),
-      body: JSON.stringify({ name, gender, price, cat_id, img, stock: 'disponible' }),
+      body: JSON.stringify({ name, gender, price, cat_id, img, stock: 'disponible', type }),
     });
     if (res.ok) {
       const data = await res.json();
-      products.push({ id: String(data.id), name, gender, price, cat_id, stock: 'disponible', img });
+      products.push({ id: String(data.id), name, gender, type, price, cat_id, stock: 'disponible', img });
       document.getElementById('newName').value = '';
       document.getElementById('newGender').value = '';
+      document.getElementById('newType').value = '';
       document.getElementById('newPrice').value = '';
       document.getElementById('newImg').value = '';
       resetUploadArea('newImgUpload');
@@ -202,6 +204,7 @@ function openEditModal(id) {
   document.getElementById('editId').value = id;
   document.getElementById('editName').value = p.name;
   document.getElementById('editGender').value = p.gender;
+  document.getElementById('editType').value = p.type || '';
   document.getElementById('editPrice').value = p.price;
   document.getElementById('editCat').value = p.cat_id;
   document.getElementById('editImg').value = p.img || '';
@@ -233,6 +236,7 @@ async function saveEdit() {
   const data = {
     name: document.getElementById('editName').value,
     gender: document.getElementById('editGender').value,
+    type: document.getElementById('editType').value,
     price: document.getElementById('editPrice').value,
     cat_id: document.getElementById('editCat').value,
     img: document.getElementById('editImg').value,

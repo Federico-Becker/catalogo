@@ -6,10 +6,10 @@ async function handler(req, res) {
   if (!id) return res.status(400).json({ error: 'ID requerido' });
 
   if (req.method === 'PUT') {
-    const { name, gender, price, cat_id, stock, img } = req.body || {};
+    const { name, gender, price, cat_id, stock, img, type } = req.body || {};
     await query(
-      'UPDATE products SET name=?, gender=?, price=?, cat_id=?, stock=?, img=? WHERE id=?',
-      [name || '', gender || '', price || '', cat_id || '', stock || 'disponible', img || '', id]
+      'UPDATE products SET name=?, gender=?, price=?, cat_id=?, stock=?, img=?, type=? WHERE id=?',
+      [name || '', gender || '', price || '', cat_id || '', stock || 'disponible', img || '', type || '', id]
     );
     return res.status(200).json({ message: 'Producto actualizado' });
   }

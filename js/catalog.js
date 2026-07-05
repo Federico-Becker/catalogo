@@ -17,9 +17,7 @@ function waLink(name, price) {
 
 function productCard(p) {
   const ss = p.stock === 'sin-stock';
-  const genderUpper = p.gender ? p.gender.toUpperCase() : '';
-  const isKit = genderUpper.includes('KIT');
-  const isMini = genderUpper.includes('MINI');
+  const hasType = p.type && p.type.trim().length > 0;
   const img = p.img
     ? `<img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
     : '';
@@ -27,8 +25,7 @@ function productCard(p) {
     <div class="product-img-wrap">
       ${img}<div class="product-img-placeholder" style="${p.img ? 'display:none' : ''}">🌿</div>
       ${ss ? '<span class="badge-sin-stock">Sin stock</span>' : ''}
-      ${isKit ? '<span class="badge-kit">Kit</span>' : ''}
-      ${isMini ? '<span class="badge-kit" style="background:var(--accent)">Mini</span>' : ''}
+      ${hasType ? `<span class="badge-kit" style="background:var(--accent)">${p.type}</span>` : ''}
     </div>
     <div class="product-body">
       <div class="product-gender">${p.gender}</div>

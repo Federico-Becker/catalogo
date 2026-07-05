@@ -9,12 +9,12 @@ async function handler(req, res) {
 
   return authMiddleware(async (req, res) => {
     if (req.method === 'POST') {
-      const { name, gender, price, cat_id, stock, img } = req.body || {};
+      const { name, gender, price, cat_id, stock, img, type } = req.body || {};
       if (!name) return res.status(400).json({ error: 'Nombre requerido' });
 
       const result = await query(
-        'INSERT INTO products (name, gender, price, cat_id, stock, img) VALUES (?, ?, ?, ?, ?, ?)',
-        [name, gender || '', price || '', cat_id || 'sin-categoria', stock || 'disponible', img || '']
+        'INSERT INTO products (name, gender, price, cat_id, stock, img, type) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [name, gender || '', price || '', cat_id || 'sin-categoria', stock || 'disponible', img || '', type || '']
       );
       return res.status(201).json({ id: Number(result.lastInsertRowid), message: 'Producto creado' });
     }
