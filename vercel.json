@@ -15,7 +15,7 @@
     { "src": "/sw.js", "dest": "/sw.js" },
     { "src": "/css/(.*)", "dest": "/css/$1" },
     { "src": "/js/(.*)", "dest": "/js/$1" },
-    { "src": "/(manifest.json|favicon.ico)", "dest": "/$1" },
+    { "src": "/(manifest.json|favicon.ico|favicon.jpg)", "dest": "/$1" },
     { "src": "/admin", "dest": "/admin.html" },
     { "src": "/admin/(.*)", "dest": "/admin.html" },
     { "src": "/(.*)", "dest": "/$1" }
