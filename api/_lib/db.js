@@ -29,10 +29,13 @@ async function execute(sql, args = []) {
 
   const data = await res.json();
   const first = data.results?.[0];
-  if (!first || first.type === 'close') return { rows: [], lastInsertRowid: 0 };
+  if (!first || first.type !== 'ok') return { rows: [], lastInsertRowid: 0 };
 
-  const cols = first.result?.cols || [];
-  const rows = (first.result?.rows || []).map((row) => {
+  const result = first.response?.result;
+  if (!result) return { rows: [], lastInsertRowid: 0 };
+
+  const cols = result.cols || [];
+  const rows = (result.rows || []).map((row) => {
     const obj = {};
     cols.forEach((col, i) => {
       obj[col.name] = row[i]?.value ?? row[i];
@@ -42,7 +45,7 @@ async function execute(sql, args = []) {
 
   return {
     rows,
-    lastInsertRowid: Number(first.result?.last_insert_rowid) || 0,
+    lastInsertRowid: Number(result.last_insert_rowid) || 0,
   };
 }
 
