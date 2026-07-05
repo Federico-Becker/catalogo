@@ -4,6 +4,10 @@ let products = [];
 let categories = [];
 let currentAdminSearch = '';
 
+function normalize(s) {
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
 // ── AUTH ──
 function getToken() { return token; }
 function authHeaders() { return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` }; }
@@ -98,14 +102,14 @@ function populateSelects() {
 // ── PRODUCTS LIST ──
 function renderAdminList(filter = '') {
   const list = document.getElementById('adminProductList');
-  const lower = filter.toLowerCase();
+  const lower = normalize(filter);
   const filtered = products.filter(
     (p) =>
       !lower ||
-      p.name.toLowerCase().includes(lower) ||
-      p.gender.toLowerCase().includes(lower) ||
-      p.cat_id.toLowerCase().includes(lower) ||
-      p.stock.toLowerCase().includes(lower)
+      normalize(p.name).includes(lower) ||
+      normalize(p.gender).includes(lower) ||
+      normalize(p.cat_id).includes(lower) ||
+      normalize(p.stock).includes(lower)
   );
 
   const grouped = {};

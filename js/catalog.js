@@ -1,6 +1,10 @@
 const API = '/api';
 const WA = '5491136534668';
 
+function normalize(s) {
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
 let products = [];
 let categories = [];
 let currentCategory = 'oferta';
@@ -147,12 +151,12 @@ function handleSearch(q) {
   document.querySelectorAll('.cat-tab').forEach((t) => t.classList.remove('active'));
   document.getElementById('searchSection').classList.add('visible');
 
-  const lower = trimmed.toLowerCase();
+  const lower = normalize(trimmed);
   const results = products.filter(
     (p) =>
-      p.name.toLowerCase().includes(lower) ||
-      p.gender.toLowerCase().includes(lower) ||
-      p.cat_id.toLowerCase().includes(lower)
+      normalize(p.name).includes(lower) ||
+      normalize(p.gender).includes(lower) ||
+      normalize(p.cat_id).includes(lower)
   );
   const grid = document.getElementById('searchGrid');
   grid.innerHTML = results.length
