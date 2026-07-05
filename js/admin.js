@@ -64,12 +64,7 @@ async function openAdmin() {
 }
 
 function closeAdmin() {
-  document.getElementById('adminPanel').classList.remove('open');
-  document.getElementById('loginScreen').classList.remove('open');
-  setTimeout(() => {
-    document.body.style.overflow = '';
-    window.scrollTo(0, 0);
-  }, 50);
+  location.reload();
 }
 
 function switchAdminTab(tab, btn) {
